@@ -1,0 +1,9 @@
+[package]
+name = "thecat"
+version = "0.1.0"
+authors = ["M@ <matthew.dunlap+github@gmail.com>"]
+edition = "2018"
+license = "MIT"
+
+[dependencies]
+penrose = "0.1.11"
