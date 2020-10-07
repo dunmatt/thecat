@@ -6,4 +6,5 @@ edition = "2018"
 license = "MIT"
 
 [dependencies]
+chrono = "^0"
 penrose = "0.1.11"
