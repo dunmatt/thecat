@@ -117,6 +117,8 @@ fn do_two_region_layout(
     main_region_window_count: u32,
     main_region_ratio: f32,
 ) -> Vec<ResizeAction> {
+    // 2/3rds here to account for the main window also getting the left column.
+    let main_region_ratio = main_region_ratio * 2.0 / 3.0;
     let (main_w, secondary_w) = region_widths(to_fill, main_region_ratio);
     let (main, secondary) = utils::split_at_width(to_fill, main_w + secondary_w);
     let main_layout = layout_main(&main, main_region_window_count);

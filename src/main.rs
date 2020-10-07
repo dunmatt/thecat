@@ -4,7 +4,7 @@ use std::collections::HashMap;
 
 use penrose::{
     data_types::Change::{Less, More},
-    draw::{dwm_bar, TextStyle, XCBDraw},
+    draw::{TextStyle, XCBDraw},
     // contrib::actions::focus_or_spawn
     gen_keybindings,
     helpers::index_selectors,
@@ -35,7 +35,7 @@ fn main() -> Result<()> {
     config.gap_px = 0;
     config.bar_height = HEIGHT as u32;
 
-    config.hooks.push(Box::new(dwm_bar(
+    config.hooks.push(Box::new(bars::awesome_bar(
         Box::new(XCBDraw::new()?),
         HEIGHT,
         &TextStyle {
