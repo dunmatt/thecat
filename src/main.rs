@@ -8,7 +8,7 @@ use penrose::{
     // contrib::actions::focus_or_spawn
     gen_keybindings,
     helpers::index_selectors,
-    layout::{monocle, Layout, LayoutConf},
+    layout::{Layout, LayoutConf},
     run_external,
     run_internal,
     Backward,
@@ -51,22 +51,13 @@ fn main() -> Result<()> {
     )?));
 
     // -- layouts --
-    let follow_focus_conf =
-        LayoutConf { floating: false, gapless: true, follow_focus: true, allow_wrapping: true };
-    let n_main = 2;
-    let ratio = 0.5;
-    config.layouts = vec![
-        // Layout::new("[side]", LayoutConf::default(), side_stack, n_main, ratio),
-        Layout::new(
-            "[focus]",
-            LayoutConf::default(),
-            layouts::make_horizontal_central_main_layout(),
-            n_main,
-            ratio,
-        ),
-        // Layout::new("[botm]", LayoutConf::default(), bottom_stack, n_main, ratio),
-        Layout::new("[mono]", follow_focus_conf, monocle, n_main, ratio),
-    ];
+    config.layouts = vec![Layout::new(
+        "[focus]",
+        LayoutConf::default(),
+        layouts::make_horizontal_central_main_layout(),
+        2,
+        0.5,
+    )];
 
     let key_bindings = gen_keybindings! {
         "M-C-f" => run_external!("firefox");
@@ -87,6 +78,8 @@ fn main() -> Result<()> {
         "M-bracketleft" => run_internal!(cycle_screen, Backward);
         "M-S-Up" => run_internal!(update_max_main, More);
         "M-S-Down" => run_internal!(update_max_main, Less);
+        "M-S-Right" => run_internal!(update_main_ratio, More);
+        "M-S-Left" => run_internal!(update_main_ratio, Less);
 
     //         "M-j" => run_internal!(cycle_client, Forward);
     //         "M-k" => run_internal!(cycle_client, Backward);
@@ -95,8 +88,6 @@ fn main() -> Result<()> {
     //         "M-S-bracketleft" => run_internal!(drag_workspace, Backward);
     //         "M-grave" => run_internal!(cycle_layout, Forward);
     //         "M-S-grave" => run_internal!(cycle_layout, Backward);
-    //         "M-A-Right" => run_internal!(update_main_ratio, More);
-    //         "M-A-Left" => run_internal!(update_main_ratio, Less);
     //         "M-semicolon" => run_external!("dmenu_run");
 
         refmap [ config.ws_range() ] in {
@@ -109,6 +100,5 @@ fn main() -> Result<()> {
     let mut wm = WindowManager::init(config, &conn);
     wm.grab_keys_and_run(key_bindings, HashMap::new());
 
-    // println!("Hi!");
     Ok(())
 }

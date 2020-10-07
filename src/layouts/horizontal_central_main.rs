@@ -71,7 +71,6 @@ fn layout_main(to_fill: &Region, window_count: u32) -> Vec<Region> {
     }
 }
 
-// TODO: this should probably move to utils
 fn aspect_ratio_sse(layout: &Vec<Region>) -> u32 {
     // u32 instead of f32 because we need Ord
     // * 100.0 here to avoid precision loss
@@ -112,8 +111,6 @@ fn do_all_main_layout(clients: &[&Client], to_fill: &Region) -> Vec<ResizeAction
     clients.iter().zip(layout).map(|(c, r)| (c.id(), Some(r))).collect()
 }
 
-// TODO: get rid of the distinction between two and three region layouts, 
-//       always try both and pick the min by aspect ratio sse
 fn do_two_region_layout(
     clients: &[&Client],
     to_fill: &Region,
@@ -151,7 +148,7 @@ fn do_three_region_layout(
 
     clients
         .iter()
-        .zip(main_layout.into_iter().chain(left_layout).chain(right_layout))
+        .zip(left_layout.into_iter().chain(main_layout).chain(right_layout))
         .map(|(c, r)| (c.id(), Some(r)))
         .collect()
 }
