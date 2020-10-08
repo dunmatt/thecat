@@ -11,5 +11,3 @@
 pub mod bars;
 pub mod layouts;
 pub mod widgets;
-
-// TODO: define a configuration type
