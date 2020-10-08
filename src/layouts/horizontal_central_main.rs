@@ -11,9 +11,7 @@ use penrose::{
     layout::LayoutFunc,
 };
 
-use super::utils;
-
-const TARGET_ASPECT_RATIO: f32 = 4.0 / 3.0;
+use super::{fair::TARGET_ASPECT_RATIO, utils};
 
 /// Creates and returns a closure that performs layouts.
 pub fn new() -> LayoutFunc {

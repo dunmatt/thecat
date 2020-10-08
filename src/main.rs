@@ -21,43 +21,31 @@ use penrose::{
 
 use thecat::*;
 
-// TODO: make all of these command line parameters, perhaps even dynamically adjustable
-const HEIGHT: usize = 18;
-const PROFONT: &str = "ProFont For Powerline";
-const BLACK: u32 = 0x282828ff;
-const GREY: u32 = 0x3c3836ff;
-const WHITE: u32 = 0xebdbb2ff;
-const BLUE: u32 = 0x458588ff;
+// TODO: command line parameters for the style options, perhaps even dynamically adjustable
 
 fn main() -> Result<()> {
+    let bar_config = bars::AwesomeBarConfiguration::default();
+    // HEIGHT,
+    // &TextStyle {
+    //     font: PROFONT.to_string(),
+    //     point_size: 11,
+    //     fg: WHITE.into(),
+    //     bg: Some(BLACK.into()),
+    //     padding: (2.0, 2.0),
+    // },
+    // BLUE, // highlight
+    // GREY, // empty_ws
+    // &config.workspaces,
+
     let mut config = Config::default();
     config.border_px = 1;
     config.gap_px = 0;
-    config.bar_height = HEIGHT as u32;
+    config.bar_height = bar_config.bar_height;
 
-    config.hooks.push(Box::new(bars::awesome_bar(
-        Box::new(XCBDraw::new()?),
-        HEIGHT,
-        &TextStyle {
-            font: PROFONT.to_string(),
-            point_size: 11,
-            fg: WHITE.into(),
-            bg: Some(BLACK.into()),
-            padding: (2.0, 2.0),
-        },
-        BLUE, // highlight
-        GREY, // empty_ws
-        &config.workspaces,
-    )?));
+    config.hooks.push(Box::new(bars::awesome_bar(Box::new(XCBDraw::new()?), &bar_config)?));
 
     // -- layouts --
-    config.layouts = vec![Layout::new(
-        "[focus]",
-        LayoutConf::default(),
-        layouts::make_horizontal_central_main_layout(),
-        2,
-        0.5,
-    )];
+    config.layouts = vec![layouts::make_horizontal_central_main_layout()];
 
     let key_bindings = gen_keybindings! {
         "M-C-f" => run_external!("firefox");
