@@ -3,6 +3,7 @@
 use std::collections::HashMap;
 
 use penrose::{
+    core::ring::Selector,
     data_types::Change::{Less, More},
     draw::XCBDraw,
     // contrib::actions::focus_or_spawn
@@ -52,6 +53,7 @@ fn main() -> Result<()> {
         "M-S-Return" => run_external!("urxvt");
         "Print" => run_external!("scrot -e 'mv $f ~/screenshots/ 2> /dev/null");
 
+        "M-f" => run_internal!(toggle_client_fullscreen, &Selector::Focused);
         "M-j" => run_internal!(cycle_client, Backward);
         "M-S-j" => run_internal!(drag_client, Backward);
         "M-k" => run_internal!(cycle_client, Forward);
