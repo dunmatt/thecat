@@ -7,21 +7,19 @@
 
 use penrose::{
     client::Client,
-    data_types::{Region, ResizeAction, WinId},
+    data_types::{Region, ResizeAction},
     layout::LayoutFunc,
 };
 
-use super::{fair::TARGET_ASPECT_RATIO, utils};
+use super::{fair::layout_region_fairly, utils, TARGET_ASPECT_RATIO};
 
 /// Creates and returns a closure that performs layouts.
 pub fn new() -> LayoutFunc {
-    // wrapping the do function in a closure because I suspect we'll need additional parameters
-    |a, b, c, d, e| do_horizontal_central_main_layout(a, b, c, d, e)
+    |a, _b, c, d, e| do_horizontal_central_main_layout(a, c, d, e)
 }
 
 fn do_horizontal_central_main_layout(
     clients: &[&Client],
-    _active_client_id: Option<WinId>,
     to_fill: &Region,
     main_region_window_count: u32,
     main_region_ratio: f32,
@@ -52,9 +50,9 @@ fn layout_main(to_fill: &Region, window_count: u32) -> Vec<Region> {
         2 => {
             let (_, _, w, h) = to_fill.values();
             let floor = h * 3 / 4;
-            let (row_a, row_b) = utils::split_at_height(&to_fill, floor);
+            let (row_a, row_b) = to_fill.split_at_height(floor);
             let wall = w * 2 / 3;
-            let (col_a, col_b) = utils::split_at_width(&to_fill, wall);
+            let (col_a, col_b) = to_fill.split_at_width(wall);
 
             let row_ratio = utils::aspect_ratio(&row_a);
             let col_ratio = utils::aspect_ratio(&col_a);
@@ -65,42 +63,8 @@ fn layout_main(to_fill: &Region, window_count: u32) -> Vec<Region> {
                 vec![col_a, col_b]
             }
         }
-        _ => layout_region(to_fill, window_count),
+        _ => layout_region_fairly(to_fill, window_count),
     }
-}
-
-fn aspect_ratio_sse(layout: &Vec<Region>) -> u32 {
-    // u32 instead of f32 because we need Ord
-    // * 100.0 here to avoid precision loss
-    (layout.iter().map(|r| (utils::aspect_ratio(r) - TARGET_ASPECT_RATIO).powi(2)).sum::<f32>()
-        * 100.0) as u32
-}
-
-fn layout_region(to_fill: &Region, window_count: u32) -> Vec<Region> {
-    (0..window_count)
-        .map(|c| layout_region_in_rows(to_fill, window_count, c + 1))
-        .min_by_key(aspect_ratio_sse)
-        .unwrap_or(vec![*to_fill])
-}
-
-fn layout_region_in_rows(to_fill: &Region, window_count: u32, full_row_count: u32) -> Vec<Region> {
-    let col_count = window_count / full_row_count;
-    let top_count = window_count - col_count * full_row_count;
-    let row_count = if top_count == 0 { full_row_count } else { full_row_count + 1 };
-
-    let mut results = Vec::new();
-
-    let mut rows = utils::split_into_rows(to_fill, row_count);
-
-    if top_count > 0 {
-        let row = rows.remove(0);
-        results.append(&mut utils::split_into_columns(&row, top_count));
-    }
-    for row in rows {
-        results.append(&mut utils::split_into_columns(&row, col_count));
-    }
-
-    results
 }
 
 fn do_all_main_layout(clients: &[&Client], to_fill: &Region) -> Vec<ResizeAction> {
@@ -118,10 +82,10 @@ fn do_two_region_layout(
     // 2/3rds here to account for the main window also getting the left column.
     let main_region_ratio = main_region_ratio * 2.0 / 3.0;
     let (main_w, secondary_w) = region_widths(to_fill, main_region_ratio);
-    let (main, secondary) = utils::split_at_width(to_fill, main_w + secondary_w);
+    let (main, secondary) = to_fill.split_at_width(main_w + secondary_w);
     let main_layout = layout_main(&main, main_region_window_count);
     let secondary_layout =
-        layout_region(&secondary, clients.len() as u32 - main_region_window_count);
+        layout_region_fairly(&secondary, clients.len() as u32 - main_region_window_count);
 
     clients
         .iter()
@@ -137,14 +101,16 @@ fn do_three_region_layout(
     main_region_ratio: f32,
 ) -> Vec<ResizeAction> {
     let (main_w, secondary_w) = region_widths(to_fill, main_region_ratio);
-    let (left, remainder) = utils::split_at_width(to_fill, secondary_w);
-    let (main, right) = utils::split_at_width(&remainder, main_w);
+    let (left, remainder) = to_fill.split_at_width(secondary_w);
+    let (main, right) = remainder.split_at_width(main_w);
 
     let left_window_count = (clients.len() as u32 - main_region_window_count) / 2;
-    let left_layout = layout_region(&left, left_window_count);
+    let left_layout = layout_region_fairly(&left, left_window_count);
     let main_layout = layout_main(&main, main_region_window_count);
-    let right_layout =
-        layout_region(&right, clients.len() as u32 - left_window_count - main_region_window_count);
+    let right_layout = layout_region_fairly(
+        &right,
+        clients.len() as u32 - left_window_count - main_region_window_count,
+    );
 
     clients
         .iter()

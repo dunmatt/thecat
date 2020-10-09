@@ -1,4 +1,5 @@
-/// A simple, customizable clock widget.
+//! A simple, customizable clock widget.
+
 use chrono::prelude::*;
 use penrose::{
     draw::{bar::widgets::Text, DrawContext, TextStyle, Widget},
@@ -6,7 +7,7 @@ use penrose::{
     Result,
 };
 
-use crate::widgets::configurations;
+use crate::widgets::DEFAULT_TEXT_STYLE;
 
 /// A good balance between ISO compliance and readability, eg: 2001-07-08 00:34
 pub const DEFAULT_TIME_FORMAT: &str = "%Y-%m-%d %H:%M";
@@ -26,7 +27,7 @@ pub struct Configuration<'a> {
     /// The format string (in `chrono` format) you'd like the time displayed in.
     pub time_format: &'a str,
     /// The font and color information to use for the text.
-    pub style: &'a TextStyle,
+    pub style: &'a TextStyle<'a>,
     /// Should this widget occupy as much space as possible?
     pub greedy: bool,
     /// Should this widget alight to the right side of the screen?
@@ -88,7 +89,7 @@ impl<'a> Default for Configuration<'a> {
     fn default() -> Configuration<'a> {
         Configuration {
             time_format: DEFAULT_TIME_FORMAT,
-            style: &configurations::DEFAULT_TEXT_STYLE,
+            style: &DEFAULT_TEXT_STYLE,
             greedy: false,
             right_justified: false,
         }

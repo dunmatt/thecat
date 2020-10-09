@@ -4,11 +4,10 @@ use std::collections::HashMap;
 
 use penrose::{
     data_types::Change::{Less, More},
-    draw::{TextStyle, XCBDraw},
+    draw::XCBDraw,
     // contrib::actions::focus_or_spawn
     gen_keybindings,
     helpers::index_selectors,
-    layout::{Layout, LayoutConf},
     run_external,
     run_internal,
     Backward,
@@ -21,38 +20,37 @@ use penrose::{
 
 use thecat::*;
 
+// TODO LIST //
+// TODO: switch cargo.toml back to pointing upstream once https://github.com/sminez/penrose/pull/75 lands
+// TODO: commit and push
+// TODO: write an all clients widget
+// TODO: add simple theme support
 // TODO: command line parameters for the style options, perhaps even dynamically adjustable
 
 fn main() -> Result<()> {
     let bar_config = bars::AwesomeBarConfiguration::default();
-    // HEIGHT,
-    // &TextStyle {
-    //     font: PROFONT.to_string(),
-    //     point_size: 11,
-    //     fg: WHITE.into(),
-    //     bg: Some(BLACK.into()),
-    //     padding: (2.0, 2.0),
-    // },
-    // BLUE, // highlight
-    // GREY, // empty_ws
-    // &config.workspaces,
 
     let mut config = Config::default();
     config.border_px = 1;
     config.gap_px = 0;
     config.bar_height = bar_config.bar_height;
+    config.floating_classes = &["rofi"];
 
     config.hooks.push(Box::new(bars::awesome_bar(Box::new(XCBDraw::new()?), &bar_config)?));
 
     // -- layouts --
-    config.layouts = vec![layouts::make_horizontal_central_main_layout()];
+    config.layouts =
+        vec![layouts::make_horizontal_central_main_layout(), layouts::make_fair_layout()];
 
     let key_bindings = gen_keybindings! {
         "M-C-f" => run_external!("firefox");
+        "M-r" => run_external!("/home/matt/code/thecat/scripts/rofi-wrap");
         "M-C-s" => run_external!("subl");
         "M-C-v" => run_external!("pavucontrol");
+        "M-C-y" => run_external!("yed");
         "M-Return" => run_external!("alacritty");
         "M-S-Return" => run_external!("urxvt");
+        "Print" => run_external!("scrot -e 'mv $f ~/screenshots/ 2> /dev/null");
 
         "M-j" => run_internal!(cycle_client, Backward);
         "M-S-j" => run_internal!(drag_client, Backward);
@@ -68,15 +66,6 @@ fn main() -> Result<()> {
         "M-S-Down" => run_internal!(update_max_main, Less);
         "M-S-Right" => run_internal!(update_main_ratio, More);
         "M-S-Left" => run_internal!(update_main_ratio, Less);
-
-    //         "M-j" => run_internal!(cycle_client, Forward);
-    //         "M-k" => run_internal!(cycle_client, Backward);
-    //         "M-Tab" => run_internal!(toggle_workspace);
-    //         "M-S-bracketright" => run_internal!(drag_workspace, Forward);
-    //         "M-S-bracketleft" => run_internal!(drag_workspace, Backward);
-    //         "M-grave" => run_internal!(cycle_layout, Forward);
-    //         "M-S-grave" => run_internal!(cycle_layout, Backward);
-    //         "M-semicolon" => run_external!("dmenu_run");
 
         refmap [ config.ws_range() ] in {
             "M-{}" => focus_workspace [ index_selectors(config.workspaces.len()) ];

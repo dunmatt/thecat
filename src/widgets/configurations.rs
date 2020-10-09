@@ -1,16 +1,8 @@
-/// This module houses configuration structs for external widgets.
+//! This module houses configuration structs for external widgets.
+
 use penrose::draw::{Color, TextStyle};
 
-/// The default workspace names.
-pub const DEFAULT_WORKSPACE_NAMES: &[&str] = &["1", "2", "3", "4", "5", "6", "7", "8", "9"];
-/// The default text style for external widgets.
-pub const DEFAULT_TEXT_STYLE: TextStyle = TextStyle {
-    font: "ProFont For Powerline".to_string(),
-    point_size: 11,
-    fg: 0xEBDB_B2FF.into(),
-    bg: Some(0x2828_28FF.into()),
-    padding: (2.0, 2.0),
-};
+use crate::{widgets::DEFAULT_TEXT_STYLE, DEFAULT_WORKSPACE_NAMES};
 
 /// All of the settings afforded by a penrose::draw::Workspaces widget.
 #[derive(Clone, Debug)]
@@ -18,7 +10,7 @@ pub struct WorkspacesConfiguration<'a> {
     /// The names to display for each workspace.
     pub names: &'a [&'a str],
     /// The font and color information to use for the text.
-    pub style: &'a TextStyle,
+    pub style: &'a TextStyle<'a>,
     /// The background color to use for the current workspace.
     pub highlight: Color,
     /// The text color to use for the names of empty workspaces.
@@ -30,8 +22,8 @@ impl<'a> Default for WorkspacesConfiguration<'a> {
         WorkspacesConfiguration {
             names: DEFAULT_WORKSPACE_NAMES,
             style: &DEFAULT_TEXT_STYLE,
-            highlight: 0x4585_88FF.into(),
-            empty: 0x3C38_36FF.into(),
+            highlight: Color::from_rgb(0x45, 0x85, 0x88),
+            empty: Color::from_rgb(0x3C, 0x38, 0x36),
         }
     }
 }
@@ -40,7 +32,7 @@ impl<'a> Default for WorkspacesConfiguration<'a> {
 #[derive(Clone, Debug)]
 pub struct ActiveWindowNameConfiguration<'a> {
     /// The font and color information to use for the text.
-    pub style: &'a TextStyle,
+    pub style: &'a TextStyle<'a>,
     /// The maximum length to display of a window's name.
     pub max_name_length: u32,
     /// Should this widget occupy as much space as possible?
@@ -64,7 +56,7 @@ impl<'a> Default for ActiveWindowNameConfiguration<'a> {
 #[derive(Clone, Debug)]
 pub struct CurrentLayoutConfiguration<'a> {
     /// The font and color information to use for the text.
-    pub style: &'a TextStyle,
+    pub style: &'a TextStyle<'a>,
 }
 
 impl<'a> Default for CurrentLayoutConfiguration<'a> {
