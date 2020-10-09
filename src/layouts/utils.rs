@@ -1,6 +1,9 @@
-//! General purpose utilities to help with building layouts.  Many of these should migrate upstream.
+//! General purpose utilities to help with building layouts.  Many of these should migrate
+//! upstream.
 
 use penrose::data_types::Region;
+
+use super::TARGET_ASPECT_RATIO;
 
 /// Computes the aspect ratio of a given region.
 pub fn aspect_ratio(r: &Region) -> f32 {
@@ -8,22 +11,13 @@ pub fn aspect_ratio(r: &Region) -> f32 {
     w as f32 / h as f32
 }
 
-/// Divides this region into two columns where the first has the given width.
-///
-/// Panics if new_width is not within the region.
-pub fn split_at_width(r: &Region, new_width: u32) -> (Region, Region) {
-    let (x, y, w, h) = r.values();
-    assert!(new_width < w, "Split out of range.");
-    (Region::new(x, y, new_width, h), Region::new(x + new_width, y, w - new_width, h))
-}
-
-/// Divides this region into two rows where the first has the given height.
-///
-/// Panics if new_height is not within the region.
-pub fn split_at_height(r: &Region, new_height: u32) -> (Region, Region) {
-    let (x, y, w, h) = r.values();
-    assert!(new_height < h, "Split out of range.");
-    (Region::new(x, y, w, new_height), Region::new(x, y + new_height, w, h - new_height))
+/// Computes the sum of the square errors of each window's aspect ratio versus the target ratio
+/// of 16:9.
+pub fn aspect_ratio_sse(layout: &Vec<Region>) -> u32 {
+    // u32 instead of f32 because we need Ord
+    // * 1000.0 here to avoid precision loss
+    (layout.iter().map(|r| (aspect_ratio(r) - TARGET_ASPECT_RATIO).powi(2)).sum::<f32>() * 1000.0)
+        as u32
 }
 
 /// Divides this region into `count` equal columns.

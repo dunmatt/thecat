@@ -8,7 +8,7 @@ use penrose::{
     Result,
 };
 
-use super::widgets::*;
+use crate::widgets::*;
 
 /// All of the settings afforded by awesome_bars.
 #[derive(Clone, Debug)]

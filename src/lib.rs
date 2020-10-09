@@ -8,6 +8,9 @@
 #![deny(missing_docs)]
 #![forbid(unsafe_code)]
 
+/// The default workspace names.
+pub const DEFAULT_WORKSPACE_NAMES: &[&str] = &["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+
 pub mod bars;
 pub mod layouts;
 pub mod widgets;
