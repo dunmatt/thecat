@@ -24,7 +24,6 @@ use thecat::*;
 // TODO LIST //
 // TODO: switch cargo.toml back to pointing upstream once https://github.com/sminez/penrose/pull/75 lands
 // TODO: commit and push
-// TODO: write an all clients widget
 // TODO: add simple theme support
 // TODO: command line parameters for the style options, perhaps even dynamically adjustable
 
@@ -51,7 +50,7 @@ fn main() -> Result<()> {
         "M-C-y" => run_external!("yed");
         "M-Return" => run_external!("alacritty");
         "M-S-Return" => run_external!("urxvt");
-        "Print" => run_external!("scrot -e 'mv $f ~/screenshots/ 2> /dev/null");
+        "Print" => run_external!("scrot -e 'mv $f ~/screenshots/' 2> /dev/null");
 
         "M-f" => run_internal!(toggle_client_fullscreen, &Selector::Focused);
         "M-j" => run_internal!(cycle_client, Backward);

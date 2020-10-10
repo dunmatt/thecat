@@ -2,8 +2,7 @@
 
 use penrose::{
     draw::{
-        bar::statusbar::Position, ActiveWindowName, Color, CurrentLayout, Draw, DrawContext,
-        StatusBar, Workspaces,
+        bar::statusbar::Position, Color, CurrentLayout, Draw, DrawContext, StatusBar, Workspaces,
     },
     Result,
 };
@@ -12,7 +11,7 @@ use crate::widgets::*;
 
 /// All of the settings afforded by awesome_bars.
 #[derive(Clone, Debug)]
-pub struct AwesomeBarConfiguration<'w, 'a, 'c, 'l> {
+pub struct AwesomeBarConfiguration<'w, 'c, 'l> {
     /// How much vertical space the bar occupies at the edge of the screen.
     pub bar_height: u32,
     /// Where the bar should appear on the screen.
@@ -21,8 +20,8 @@ pub struct AwesomeBarConfiguration<'w, 'a, 'c, 'l> {
     pub background: Option<Color>,
     /// The settings for the workspaces widget in the left corner of the screen.
     pub workspaces: configurations::WorkspacesConfiguration<'w>,
-    /// The settings for the active window name widget in the middle of the bar.
-    pub active_window: configurations::ActiveWindowNameConfiguration<'a>,
+    /// The settings for the open windows widget.
+    pub window_list: window_list::Configuration<'static>,
     /// The settings for the clock in the right corner of the screen.
     pub clock: clock::Configuration<'c>,
     /// The settings for the current layout widget in the right corner of the screen.
@@ -48,23 +47,17 @@ pub fn awesome_bar<Ctx: DrawContext>(
                 config.workspaces.highlight,
                 config.workspaces.empty,
             )),
-            Box::new(ActiveWindowName::new(
-                config.active_window.style,
-                config.active_window.max_name_length as usize,
-                config.active_window.greedy,
-                config.active_window.right_justified,
-            )),
+            Box::new(window_list::WindowList::new(&config.window_list)),
             Box::new(clock::Clock::new(&config.clock)),
             Box::new(CurrentLayout::new(config.layout.style)),
         ],
     )?)
 }
 
-impl<'w, 'a, 'c, 'l> AwesomeBarConfiguration<'w, 'a, 'c, 'l> {
+impl<'w, 'c, 'l> AwesomeBarConfiguration<'w, 'c, 'l> {
     fn find_background_color(&self) -> Color {
         self.background
             .or(self.workspaces.style.bg)
-            .or(self.active_window.style.bg)
             .or(self.clock.style.bg)
             .or(self.layout.style.bg)
             .unwrap_or(0.into()) // black
@@ -73,27 +66,21 @@ impl<'w, 'a, 'c, 'l> AwesomeBarConfiguration<'w, 'a, 'c, 'l> {
     fn find_fonts<'f>(&self) -> Vec<&'f str>
     where
         'w: 'f,
-        'a: 'f,
         'c: 'f,
         'l: 'f,
     {
-        vec![
-            &self.workspaces.style.font,
-            &self.active_window.style.font,
-            &self.clock.style.font,
-            &self.layout.style.font,
-        ]
+        vec![&self.workspaces.style.font, &self.clock.style.font, &self.layout.style.font]
     }
 }
 
-impl<'w, 'a, 'c, 'l> Default for AwesomeBarConfiguration<'w, 'a, 'c, 'l> {
-    fn default() -> AwesomeBarConfiguration<'w, 'a, 'c, 'l> {
+impl<'w, 'c, 'l> Default for AwesomeBarConfiguration<'w, 'c, 'l> {
+    fn default() -> AwesomeBarConfiguration<'w, 'c, 'l> {
         AwesomeBarConfiguration {
             bar_height: 18,
             position: Position::Top,
             background: None,
             workspaces: Default::default(),
-            active_window: Default::default(),
+            window_list: Default::default(),
             clock: Default::default(),
             layout: Default::default(),
         }

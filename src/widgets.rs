@@ -13,3 +13,4 @@ pub const DEFAULT_TEXT_STYLE: TextStyle = TextStyle {
 
 pub mod clock;
 pub mod configurations;
+pub mod window_list;
