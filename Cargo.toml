@@ -7,6 +7,7 @@ license = "MIT"
 
 [dependencies]
 chrono = "^0"
-penrose = {path="../penrose"}
+# penrose = {path="../penrose"}
 # penrose = {git="https://github.com/sminez/penrose", branch="develop"}
+penrose = {git="https://github.com/dunmatt/penrose", branch="colorTexts"}
 # penrose = "0.1.11"
