@@ -114,6 +114,7 @@ impl Widget for WindowList {
         let mut x = ctx.get_x_offset();
 
         for text in text_box_iter!(self) {
+            // TODO: figure out how it is possible for this to be drawing over the clock
             text.draw(ctx, screen, screen_has_focus, greedy_width, h)?;
             if text.is_greedy() {
                 x += greedy_width;

@@ -25,6 +25,7 @@ use thecat::*;
 // TODO: switch cargo.toml back to pointing upstream once https://github.com/sminez/penrose/pull/75 lands
 // TODO: commit and push
 // TODO: add simple theme support
+// TODO: add some sort of tracking so that windows in the main region don't get pushed out
 // TODO: command line parameters for the style options, perhaps even dynamically adjustable
 
 fn main() -> Result<()> {
