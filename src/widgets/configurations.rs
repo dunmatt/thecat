@@ -10,7 +10,7 @@ pub struct WorkspacesConfiguration<'a> {
     /// The names to display for each workspace.
     pub names: &'a [&'a str],
     /// The font and color information to use for the text.
-    pub style: &'a TextStyle<'a>,
+    pub style: &'a TextStyle,
     /// The background color to use for the current workspace.
     pub highlight: Color,
     /// The text color to use for the names of empty workspaces.
@@ -32,7 +32,7 @@ impl<'a> Default for WorkspacesConfiguration<'a> {
 #[derive(Clone, Debug)]
 pub struct ActiveWindowNameConfiguration<'a> {
     /// The font and color information to use for the text.
-    pub style: &'a TextStyle<'a>,
+    pub style: &'a TextStyle,
     /// The maximum length to display of a window's name.
     pub max_name_length: u32,
     /// Should this widget occupy as much space as possible?
@@ -56,7 +56,7 @@ impl<'a> Default for ActiveWindowNameConfiguration<'a> {
 #[derive(Clone, Debug)]
 pub struct CurrentLayoutConfiguration<'a> {
     /// The font and color information to use for the text.
-    pub style: &'a TextStyle<'a>,
+    pub style: &'a TextStyle,
 }
 
 impl<'a> Default for CurrentLayoutConfiguration<'a> {

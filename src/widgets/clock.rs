@@ -27,7 +27,7 @@ pub struct Configuration<'a> {
     /// The format string (in `chrono` format) you'd like the time displayed in.
     pub time_format: &'a str,
     /// The font and color information to use for the text.
-    pub style: &'a TextStyle<'a>,
+    pub style: &'a TextStyle,
     /// Should this widget occupy as much space as possible?
     pub greedy: bool,
     /// Should this widget alight to the right side of the screen?

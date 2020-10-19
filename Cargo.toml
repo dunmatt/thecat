@@ -7,7 +7,8 @@ license = "MIT"
 
 [dependencies]
 chrono = "^0"
+lazy_static = "^1"
 # penrose = {path="../penrose"}
 # penrose = {git="https://github.com/sminez/penrose", branch="develop"}
-penrose = {git="https://github.com/dunmatt/penrose", branch="colorTexts"}
+penrose = {git="https://github.com/dunmatt/penrose", branch="getSet"}
 # penrose = "0.1.11"

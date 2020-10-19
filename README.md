@@ -3,7 +3,7 @@ The cat manages windows for me.  Good cat.
 
 # Setup Instructions
 Since the cat talks to X11 there are a few C/C++ dependencies you need to have set up on your
-machine in order to install it (with
+machine in order to install it (via
 `cargo install --branch dev --git https://github.com/dunmatt/thecat` ):
 
 ### Arch Based Distros

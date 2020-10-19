@@ -5,6 +5,7 @@
 
 use std::cmp::min;
 
+use lazy_static::lazy_static;
 use penrose::{
     core::{ring::Selector, Client},
     data_types::{Region, WinId},
@@ -15,13 +16,15 @@ use penrose::{
 
 use crate::widgets::DEFAULT_TEXT_STYLE;
 
+lazy_static! {
 /// The default style used for whichever window has focus.
-pub const DEFAULT_FOCUSED_TEXT_STYLE: TextStyle =
-    TextStyle { bg: Some(Color::from_rgb(0x3C, 0x38, 0x36)), ..DEFAULT_TEXT_STYLE };
+static ref DEFAULT_FOCUSED_TEXT_STYLE: TextStyle =
+    TextStyle { bg: Some(Color::from_rgb(0x3C, 0x38, 0x36)), ..DEFAULT_TEXT_STYLE.clone() };
 
 /// The default style used for windows that lack focus.
-pub const DEFAULT_BACKGROUND_TEXT_STYLE: TextStyle =
-    TextStyle { fg: Color::from_rgb(147, 137, 116), ..DEFAULT_TEXT_STYLE };
+static ref DEFAULT_BACKGROUND_TEXT_STYLE: TextStyle =
+    TextStyle { fg: Color::from_rgb(147, 137, 116), ..DEFAULT_TEXT_STYLE.clone() };
+}
 
 macro_rules! text_box_iter {
     ($self:ident) => {
@@ -34,8 +37,8 @@ pub struct WindowList {
     text_boxes: Vec<(WinId, Text)>,
     separator: String,
     separator_color: Option<Color>,
-    highlight: TextStyle<'static>,
-    style: TextStyle<'static>,
+    highlight: TextStyle,
+    style: TextStyle,
 }
 
 /// All of the settings afforded by WindowLists.
@@ -46,9 +49,9 @@ pub struct Configuration<'a> {
     /// The color for the separator.  None means "do not display".
     pub separator_color: Option<Color>,
     /// The font and color information to use for the active window.
-    pub highlight: &'a TextStyle<'static>,
+    pub highlight: &'a TextStyle,
     /// The font and color information to use for the text.
-    pub style: &'a TextStyle<'static>,
+    pub style: &'a TextStyle,
 }
 
 impl WindowList {
