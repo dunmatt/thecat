@@ -11,3 +11,13 @@ machine in order to install it (with
 
 ### Debian Based Distros
     sudo apt-get install -y libpango* libxcb-randr0*
+
+Depending on what (if any) desktop manager you use you may need to create a `.desktop` file before it will allow you to launch the cat.  The file path may depend on your set up, but mine is as follows:
+
+/usr/share/xsessions/thecat.desktop:
+    \[Desktop Entry]
+    Name=The Cat
+    Comment=A simple, and happy, window manager with good reflexes.
+    TryExec=ls
+    Exec=/home/matt/.cargo/bin/thecat
+    Type=Application
