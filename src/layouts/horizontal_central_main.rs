@@ -24,6 +24,8 @@ fn do_horizontal_central_main_layout(
     main_region_window_count: u32,
     main_region_ratio: f32,
 ) -> Vec<ResizeAction> {
+    let main_region_ratio = main_region_ratio.max(0.1).min(0.9);
+
     if main_region_window_count >= clients.len() as u32 {
         do_all_main_layout(clients, to_fill)
     } else if main_region_window_count + 1 == clients.len() as u32 {
